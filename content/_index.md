@@ -613,22 +613,21 @@ This includes things like:
 - Reading or writing files that the user didn’t explicitly pass as arguments (unless those files are storing internal program state, such as a cache).
 - Talking to a remote server, e.g. to download a file.
 
-**Increase information density—with ASCII art!**
-For example, `ls` shows permissions in a scannable way.
-When you first see it, you can ignore most of the information.
-Then, as you learn how it works, you pick out more patterns over time.
+**Avoid using ASCII art.**
+This includes product logos in help and splash screens, progress indicators, and table-like formatting.
+ASCII art generally creates accessibility problems.
+For example, screen readers will announce ASCII art character by character instead of as a whole, and users that require high font sizes might see mangled output due to line wrapping.
 
-```
--rw-r--r-- 1 root root     68 Aug 22 23:20 resolv.conf
-lrwxrwxrwx 1 root root     13 Mar 14 20:24 rmt -> /usr/sbin/rmt
-drwxr-xr-x 4 root root   4.0K Jul 20 14:51 security
-drwxr-xr-x 2 root root   4.0K Jul 20 14:53 selinux
--rw-r----- 1 root shadow  501 Jul 20 14:44 shadow
--rw-r--r-- 1 root root    116 Jul 20 14:43 shells
-drwxr-xr-x 2 root root   4.0K Jul 20 14:57 skel
--rw-r--r-- 1 root root      0 Jul 20 14:43 subgid
--rw-r--r-- 1 root root      0 Jul 20 14:43 subuid
-```
+**Table-like output requires extra caution.**
+Sometimes, a tool's output is naturally tabular, and it can make sense to support output formatted like a table.
+However, users of accessibility technologies (for example, screen readers) will not generally be able to navigate tabular CLI output column-wise or row-wise—they will be forced to read the output line-by-line.
+To make tabular output more inclusive:
+
+- **Allow the user to control the order and visibility of columns.** For example, `git log` provides both a `--format` flag that enables exact control over what data is displayed and several shorthand flags for different levels of information density.
+- **Do not use Unicode formatting characters to separate columns visually.** Unnecessary characters like `╣` create noise for assistive technologies.
+- **Support exporting tabular output to a tabular data format.** Users of accessibility technologies will be better able to navigate your table row-wise or column-wise if they can export it to, for example, a `.csv` file or an `.html` file with an embedded table.
+- **Any output visible in a table should also be present in other structured output formats.** For example, if you support a `--json` option, ensure that all the output exposed as a table is also exposed there.
+- **Avoid using tables to format non-tabular data.** For example, do not copy the default no-argument behavior of `ls`.
 
 **Use color with intention.**
 For example, you might want to highlight some text so the user notices it, or use red to indicate an error.
